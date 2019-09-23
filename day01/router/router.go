@@ -3,8 +3,8 @@ package router
 import (
 	"net/http"
 
-	// "../handler/sd"
-	// "./middleware"
+	"github.com/KoalaHui/go-api/day01/handler/sd"
+	"github.com/KoalaHui/go-api/day01/router/middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -13,9 +13,9 @@ import (
 func Load(g *gin.Engine, mw ...gin.HandlerFunc) *gin.Engine {
 	// Middlewares.
 	g.Use(gin.Recovery())
-	// g.Use(middleware.NoCache)
-	// g.Use(middleware.Options)
-	// g.Use(middleware.Secure)
+	g.Use(middleware.NoCache)
+	g.Use(middleware.Options)
+	g.Use(middleware.Secure)
 	g.Use(mw...)
 	// 404 Handler.
 	g.NoRoute(func(c *gin.Context) {
@@ -23,13 +23,13 @@ func Load(g *gin.Engine, mw ...gin.HandlerFunc) *gin.Engine {
 	})
 
 	// The health check handlers
-	// svcd := g.Group("/sd")
-	// {
-	// 	svcd.GET("/health", sd.HealthCheck)
-	// 	svcd.GET("/disk", sd.DiskCheck)
-	// 	svcd.GET("/cpu", sd.CPUCheck)
-	// 	svcd.GET("/ram", sd.RAMCheck)
-	// }
+	svcd := g.Group("/sd")
+	{
+		svcd.GET("/health", sd.HealthCheck)
+		svcd.GET("/disk", sd.DiskCheck)
+		svcd.GET("/cpu", sd.CPUCheck)
+		svcd.GET("/ram", sd.RAMCheck)
+	}
 
 	return g
 }
