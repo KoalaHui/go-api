@@ -3,8 +3,8 @@ package router
 import (
 	"net/http"
 
-	"github.com/KoalaHui/go-api/day01/handler/sd"
-	"github.com/KoalaHui/go-api/day01/router/middleware"
+	"go-api/handler/sd"
+	"go-api/router/middleware"
 
 	"github.com/gin-gonic/gin"
 )
