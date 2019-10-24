@@ -2,14 +2,15 @@ package main
 
 import (
 	"errors"
-	"log"
 	"net/http"
 	"time"
 
 	"go-api/config"
+	"go-api/model"
 	"go-api/router"
 
 	"github.com/gin-gonic/gin"
+	"github.com/lexkong/log"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 )
@@ -26,8 +27,17 @@ func main() {
 		panic(err)
 	}
 
+	// for {
+	// 	fmt.Println(viper.GetString("runmode"))
+	// 	time.Sleep(4 * time.Second)
+	// }
+
 	// Set gin mode.
 	gin.SetMode(viper.GetString("runmode"))
+
+	//init db
+	model.DB.Init()
+	defer model.DB.Close()
 
 	g := gin.New()
 
@@ -43,11 +53,11 @@ func main() {
 		if err := pingServer(); err != nil {
 			log.Fatal("The router has no response, or it might took too long to start up.", err)
 		}
-		log.Print("The router has been deployed successfully.")
+		log.Info("The router has been deployed successfully.")
 	}()
 
-	log.Printf("Start to listening the incoming requests on http address: %s", viper.GetString("addr"))
-	log.Printf(http.ListenAndServe(viper.GetString("addr"), g).Error())
+	log.Infof("Start to listening the incoming requests on http address: %s", viper.GetString("addr"))
+	log.Info(http.ListenAndServe(viper.GetString("addr"), g).Error())
 }
 
 // pingServer pings the http server to make sure the router is working.
@@ -60,7 +70,7 @@ func pingServer() error {
 		}
 
 		// Sleep for a second to continue the next ping.
-		log.Print("Waiting for the router, retry in 1 second.")
+		log.Info("Waiting for the router, retry in 1 second.")
 		time.Sleep(time.Second)
 	}
 	return errors.New("Cannot connect to the router.")
